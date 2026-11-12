@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<title>Staff Assault: Killer Row</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ff7a1a'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Impact' text-anchor='middle' fill='%23111'%3EMO%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #07080b; --panel: rgba(12, 14, 20, 0.86); --line: rgba(255, 255, 255, 0.12);
+    --text: #f1ede4; --muted: #9aa0ab; --orange: #ff7a1a; --blue: #3d8bff; --red: #ff3b3b; --gold: #ffcf4a;
+    --head: Impact, Haettenschweiler, 'Arial Narrow Bold', 'Franklin Gothic Bold', sans-serif;
+    --body: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--body); overflow: hidden; user-select: none; }
+  canvas#game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  .hidden { display: none !important; }
+
+  /* ---------- Menu ---------- */
+  #menu { position: fixed; inset: 0; display: grid; place-items: center; padding: 16px; background: radial-gradient(ellipse at center, rgba(0,0,0,0.25), rgba(0,0,0,0.8)); overflow-y: auto; }
+  .card { width: min(560px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; backdrop-filter: blur(6px); box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
+  .title { font-family: var(--head); font-size: clamp(40px, 9vw, 74px); line-height: 0.9; letter-spacing: 1px; margin: 0; text-align: center; color: #fff; text-shadow: 0 4px 0 #000, 0 0 30px rgba(255,122,26,0.35); }
+  .stamp { display: block; width: max-content; margin: 8px auto 4px; font-family: var(--head); font-size: clamp(20px, 4.6vw, 30px); color: var(--red); border: 3px solid var(--red); padding: 0 12px; transform: rotate(-4deg); letter-spacing: 3px; }
+  .tag { text-align: center; color: var(--muted); font-size: 13px; margin: 6px 0 16px; }
+  .row { display: flex; gap: 10px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
+  .row label.k { width: 92px; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+  input[type=text] { flex: 1; min-width: 0; background: #0d1017; border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 10px 12px; font-size: 16px; }
+  .seg { display: flex; flex: 1; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-width: 0; }
+  .seg button { flex: 1; background: #0d1017; color: var(--muted); border: 0; padding: 9px 4px; font-size: 13px; cursor: pointer; font-weight: 600; min-width: 0; }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button.on { background: var(--blue); color: #fff; }
+  .go { width: 100%; margin-top: 16px; font-family: var(--head); font-size: 30px; letter-spacing: 2px; background: var(--orange); color: #111; border: 0; border-radius: 10px; padding: 12px; cursor: pointer; box-shadow: 0 6px 0 #a5470a; }
+  .go:active { transform: translateY(3px); box-shadow: 0 3px 0 #a5470a; }
+  .controls { margin-top: 14px; font-size: 12.5px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 12px; }
+  .controls b { color: var(--text); font-weight: 600; }
+  .dedic { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; font-style: italic; }
+
+  /* ---------- HUD ---------- */
+  #hud { position: fixed; inset: 0; pointer-events: none; }
+  #players { position: absolute; top: 12px; left: 12px; display: flex; gap: 10px; flex-wrap: wrap; max-width: calc(100% - 140px); }
+  .pcard { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 8px; padding: 7px 10px; width: 210px; }
+  .pcard .nm { font-family: var(--head); font-size: 18px; letter-spacing: 1px; display: flex; justify-content: space-between; }
+  .pcard .nm span:last-child { color: var(--muted); font-family: var(--body); font-size: 12px; align-self: center; }
+  .bar { height: 8px; background: #222; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+  .bar i { display: block; height: 100%; width: 100%; transition: width 0.12s; }
+  .hp i { background: linear-gradient(90deg, #ff3b3b, #ff7a5a); }
+  .en i { background: linear-gradient(90deg, #ff9a2a, #ffd24a); }
+  .buffs { font-size: 11px; margin-top: 4px; min-height: 14px; color: var(--gold); font-weight: 700; letter-spacing: 0.5px; }
+  #objective { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); text-align: center; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px; white-space: nowrap; }
+  #objective .t { font-family: var(--head); font-size: 16px; letter-spacing: 1px; }
+  #objective .c { font-size: 12px; color: var(--muted); }
+  #fps { position: absolute; top: 12px; right: 12px; font-size: 11px; color: var(--muted); background: var(--panel); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); }
+  #radio { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); width: min(620px, calc(100% - 32px)); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; opacity: 0; transition: opacity 0.25s; }
+  #radio.show { opacity: 1; }
+  #radio .who { font-family: var(--head); letter-spacing: 1px; font-size: 15px; color: var(--gold); }
+  #radio .who::before { content: '\25CF  '; color: var(--red); }
+  #radio .txt { font-size: 15px; margin-top: 2px; }
+  #levelcard { position: absolute; top: 72px; left: 50%; transform: translateX(-50%); text-align: center; transition: opacity 0.6s; opacity: 0; width: min(560px, calc(100% - 32px)); }
+  #levelcard.show { opacity: 1; }
+  #levelcard .lt { font-family: var(--head); font-size: clamp(28px, 6vw, 44px); text-shadow: 0 3px 0 #000; }
+  #levelcard .ls { font-size: 15px; color: #ddd; text-shadow: 0 2px 4px #000; }
+  #levelcard .lt.alarm { color: var(--red); font-size: clamp(36px, 8vw, 64px); letter-spacing: 3px; animation: alarm 0.5s steps(2) infinite; }
+  @keyframes alarm { 50% { color: #fff; text-shadow: 0 0 24px var(--red), 0 3px 0 #000; } }
+  .herostamp { width: max-content; margin: 0 auto 10px; font-family: var(--head); font-size: 22px; letter-spacing: 3px; color: var(--gold); border: 3px solid var(--gold); padding: 2px 14px; transform: rotate(-3deg); }
+  @media (prefers-reduced-motion: reduce) { #levelcard .lt.alarm { animation: none; } }
+  #vignette { position: absolute; inset: 0; box-shadow: inset 0 0 160px 40px rgba(255, 0, 0, 0.55); opacity: 0; transition: opacity 0.1s; }
+  #floaters { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+  .floater { position: absolute; left: 0; top: 0; font-weight: 800; white-space: nowrap; text-shadow: 0 2px 0 #000, 0 0 6px #000; font-family: var(--body); }
+  .gear { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+  .chip { font-size: 10px; border: 1px solid var(--line); color: var(--muted); border-radius: 4px; padding: 1px 5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #bossbar { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); width: min(520px, calc(100% - 32px)); text-align: center; }
+  #bossbar .bn { font-family: var(--head); letter-spacing: 2px; color: #7dff9a; text-shadow: 0 2px 0 #000; }
+  #bossbar .bb { height: 12px; background: #111; border: 1px solid #2a4; border-radius: 6px; overflow: hidden; }
+  #bossbar .bb i { display: block; height: 100%; background: linear-gradient(90deg, #1f8a3a, #7dff9a); transition: width 0.15s; }
+  #joinHint { position: absolute; bottom: 18px; left: 16px; font-size: 12px; color: var(--muted); background: var(--panel); padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line); }
+  @media (max-width: 700px) { #joinHint { display: none; } .pcard { width: 170px; } }
+  #toast { position: absolute; bottom: 110px; left: 50%; transform: translateX(-50%); font-size: 13px; color: var(--muted); background: var(--panel); padding: 5px 10px; border-radius: 6px; opacity: 0; transition: opacity 0.4s; }
+  #toast.show { opacity: 1; }
+
+  /* ---------- Panels (clear / game over / pause) ---------- */
+  #panel { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,0.55); padding: 16px; }
+  #panel h2 { font-family: var(--head); font-size: clamp(34px, 8vw, 56px); margin: 0; text-align: center; letter-spacing: 1px; }
+  #panel .sub { text-align: center; color: var(--muted); margin: 6px 0 14px; }
+  .stats { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; font-size: 15px; margin: 10px 0; }
+  .stats div:nth-child(even) { text-align: right; font-weight: 700; color: var(--gold); }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btns button { flex: 1; min-width: 140px; }
+  .ghost { background: transparent; color: var(--text); border: 1px solid var(--line); box-shadow: none; font-size: 22px; }
+</style>
+<script>
+  // If anything crashes, show it on screen so it can be reported (instead of a silent dead button).
+  (function () {
+    var shown = {};
+    function show(msg) {
+      if (shown[msg]) return; shown[msg] = 1;
+      var b = document.getElementById('errBox');
+      if (!b) { b = document.createElement('div'); b.id = 'errBox'; b.style.cssText = 'position:fixed;left:8px;bottom:8px;max-width:calc(100% - 16px);z-index:99;background:#300;color:#fdd;border:1px solid #f55;border-radius:6px;padding:6px 10px;font:12px monospace;white-space:pre-wrap'; document.body.appendChild(b); }
+      b.textContent += (b.textContent ? '\n' : 'Game error (screenshot this): ') + msg;
+    }
+    window.addEventListener('error', function (e) { show((e.message || 'load failed') + (e.filename ? ' @ ' + e.filename.split('/').pop() + ':' + e.lineno : (e.target && e.target.src ? ' ' + e.target.src : ''))); }, true);
+    window.addEventListener('unhandledrejection', function (e) { show(String(e.reason && e.reason.message || e.reason)); });
+  })();
+</script>
+<canvas id="game"></canvas>
+<div id="floaters"></div>
+
+<div id="hud" class="hidden">
+  <div id="vignette"></div>
+  <div id="players"></div>
+  <div id="objective"><div class="t" id="objT"></div><div class="c" id="objC"></div></div>
+  <div id="fps"></div>
+  <div id="levelcard"><div class="lt" id="lvlT"></div><div class="ls" id="lvlS"></div></div>
+  <div id="radio"><div class="who" id="radWho"></div><div class="txt" id="radTxt"></div></div>
+  <div id="toast"></div>
+  <div id="bossbar" class="hidden"><div class="bn">THE RIVERBANK RIPPER</div><div class="bb"><i id="bossFill"></i></div></div>
+  <div id="joinHint" class="hidden">Press <b>A</b> on another controller to clock in</div>
+</div>
+
+<div id="menu">
+  <div class="card">
+    <h1 class="title">STAFF<br>ASSAULT</h1>
+    <span class="stamp">KILLER ROW</span>
+    <p class="tag">Prison riots. Serial killers. Tacos. One DOC family. 1 to 4 players.</p>
+    <div class="row"><label class="k" for="nameIn">Officer</label><input id="nameIn" type="text" maxlength="14" placeholder="Your last name" autocomplete="off"></div>
+    <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GENDER</span><div class="seg" id="segGender"><button data-v="male">Male</button><button data-v="female">Female</button></div></div>
+    <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GRAPHICS</span><div class="seg" id="segQuality"><button data-v="low">Low</button><button data-v="medium">Medium</button><button data-v="high">High</button><button data-v="ultra">Ultra</button></div></div>
+    <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GORE</span><div class="seg" id="segGore"><button data-v="1">On</button><button data-v="0">Off</button></div></div>
+    <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">CUSSING</span><div class="seg" id="segCuss"><button data-v="1">On</button><button data-v="0">Bleeped</button></div></div>
+    <button class="go" id="startBtn">CLOCK IN</button>
+    <div class="controls">
+      <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
+      <b>Space</b> baton &nbsp; <b>Shift</b> dash &nbsp; <b>Esc</b> pause<br>
+      <b>Controllers:</b> RT shoot, LT spray, X baton, A dash. Buddies press <b>A</b> on their own controller to jump in (up to 4).<br>
+      Grab <b style="color:var(--gold)">tacos</b> and <b style="color:#7dff6a">energy drinks</b>. Glowing gear is rare: <b style="color:#3ddc5a">green</b>, <b style="color:#5aa0ff">blue</b>, <b style="color:#b973ff">purple</b>, <b style="color:#ff9a3a">orange</b>. Stand on a downed partner to pick them up.
+    </div>
+    <div class="dedic">For Caleb, Sgt. Halley Munoz, and all my Correctional Officer homies back home.</div>
+  </div>
+</div>
+
+<div id="panel" class="hidden"><div class="card" id="panelCard"></div></div>
+
+<script type="module" src="./game.js"></script>
+<script>
+  // Watchdog: if the game code never starts, say so instead of leaving dead buttons.
+  setTimeout(function () { if (!window.G || !window.G.S) window.dispatchEvent(new ErrorEvent('error', { message: 'Game code did not start (game.js blocked or failed to load)' })); }, 8000);
+</script>
+
+</body>
+</html>
