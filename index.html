@@ -59,7 +59,12 @@
   .bar { height: 8px; background: #222; border-radius: 4px; overflow: hidden; margin-top: 5px; }
   .bar i { display: block; height: 100%; width: 100%; transition: width 0.12s; }
   .hp i { background: linear-gradient(90deg, #ff3b3b, #ff7a5a); }
+  .board { margin: 12px 0 4px; } .board .bh { font-family: var(--head); letter-spacing: 3px; color: var(--gold); font-size: 18px; margin-bottom: 4px; }
   .en i { background: linear-gradient(90deg, #ff9a2a, #ffd24a); }
+  .bar.ot { height: 5px; } .ot i { background: linear-gradient(90deg, #8a6a10, #ffd24a); }
+  .bar.ot.full { box-shadow: 0 0 8px #ffd24a; } .bar.ot.full i { background: linear-gradient(90deg, #ffd24a, #fff3a0, #ffd24a); animation: otpulse 0.6s infinite alternate; }
+  @keyframes otpulse { from { filter: brightness(0.9); } to { filter: brightness(1.4); } }
+  body.overtime #vignette { box-shadow: inset 0 0 120px 30px rgba(255, 200, 40, 0.45); opacity: 1 !important; }
   .buffs { font-size: 11px; margin-top: 4px; min-height: 14px; color: var(--gold); font-weight: 700; letter-spacing: 0.5px; }
   #objective { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); text-align: center; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px; white-space: nowrap; }
   #objective .t { font-family: var(--head); font-size: 16px; letter-spacing: 1px; }
@@ -148,16 +153,18 @@
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GENDER</span><div class="seg" id="segGender"><button data-v="male">Male</button><button data-v="female">Female</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GRAPHICS</span><div class="seg" id="segQuality"><button data-v="low">Low</button><button data-v="medium">Medium</button><button data-v="high">High</button><button data-v="ultra">Ultra</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GORE</span><div class="seg" id="segGore"><button data-v="1">On</button><button data-v="0">Off</button></div></div>
+    <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">PACE</span><div class="seg" id="segPace"><button data-v="0.8">Chill</button><button data-v="1">Classic</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">CUSSING</span><div class="seg" id="segCuss"><button data-v="1">On</button><button data-v="0">Bleeped</button></div></div>
     <button class="go" id="startBtn">CLOCK IN</button>
-    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v8 · DOC uniforms + crew name tags</div>
+    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v9 · The Yard, Lights Out, Mandatory Overtime, Caleb backup</div>
+    <div id="board" class="board hidden"><div class="bh">SHIFT BOARD</div><div id="boardRows" class="stats"></div></div>
     <div class="controls">
       <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
       <b>Phone:</b> left thumb moves, right thumb aims and shoots, buttons for spray, baton and dash. Turn it sideways.<br>
       <b>Get promoted:</b> CO II, then SGT, then LT. Your gear upgrades on its own: Orange OC, OC Vapor, 40mm, shotgun, AR-15 and grenades.<br>
-      <b>Space</b> baton &nbsp; <b>Shift</b> dash &nbsp; <b>Q</b> grenade (LT) &nbsp; <b>Esc</b> pause<br>
-      <b>Controllers:</b> RT shoot, LT spray, X baton, A dash, Y grenade. Buddies press <b>A</b> on their own controller to jump in (up to 4).<br>
-      Grab <b style="color:var(--gold)">tacos</b> and <b style="color:#7dff6a">energy drinks</b>. Glowing gear is rare: <b style="color:#3ddc5a">green</b>, <b style="color:#5aa0ff">blue</b>, <b style="color:#b973ff">purple</b>, <b style="color:#ff9a3a">orange</b>. Stand on a downed partner to pick them up.
+      <b>Space</b> baton &nbsp; <b>Shift</b> dash (hold to sprint) &nbsp; <b>F</b> MANDATORY OVERTIME &nbsp; <b>Q</b> grenade (LT) &nbsp; <b>Esc</b> pause<br>
+      <b>Controllers:</b> RT shoot, LT spray, X baton, A dash (hold to sprint), Y grenade, B overtime. Buddies press <b>A</b> on their own controller to jump in (up to 4).<br>
+      Grab <b style="color:var(--gold)">tacos</b>, <b style="color:#7dff6a">energy drinks</b>, <b style="color:#ff7a2a">Zyn</b> (hot) and <b style="color:#c79a5a">chew</b> to heal. Glowing gear is rare: <b style="color:#3ddc5a">green</b>, <b style="color:#5aa0ff">blue</b>, <b style="color:#b973ff">purple</b>, <b style="color:#ff9a3a">orange</b>. Stand on a downed partner to pick them up.
     </div>
     <div class="dedic">For Sgt. Halley Munoz, Caleb Alaniz, Dustin Davis, and all my Correctional Officer homies back home.</div>
   </div>
@@ -165,7 +172,7 @@
 
 <div id="panel" class="hidden"><div class="card" id="panelCard"></div></div>
 
-<script type="module" src="./game.js?v=8"></script>
+<script type="module" src="./game.js?v=9"></script>
 <script>
   // Watchdog: if the game code never starts, say so instead of leaving dead buttons.
   setTimeout(function () { if (!window.G || !window.G.S) window.dispatchEvent(new ErrorEvent('error', { message: 'Game code did not start (game.js blocked or failed to load)' })); }, 8000);
