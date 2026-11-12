@@ -148,7 +148,7 @@
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GORE</span><div class="seg" id="segGore"><button data-v="1">On</button><button data-v="0">Off</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">CUSSING</span><div class="seg" id="segCuss"><button data-v="1">On</button><button data-v="0">Bleeped</button></div></div>
     <button class="go" id="startBtn">CLOCK IN</button>
-    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v6 · ranks, auto weapons, staff assault alarms</div>
+    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v7 · smoother hero + boss loot timer</div>
     <div class="controls">
       <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
       <b>Phone:</b> left thumb moves, right thumb aims and shoots, buttons for spray, baton and dash. Turn it sideways.<br>
@@ -163,7 +163,7 @@
 
 <div id="panel" class="hidden"><div class="card" id="panelCard"></div></div>
 
-<script type="module" src="./game.js?v=6"></script>
+<script type="module" src="./game.js?v=7"></script>
 <script>
   // Watchdog: if the game code never starts, say so instead of leaving dead buttons.
   setTimeout(function () { if (!window.G || !window.G.S) window.dispatchEvent(new ErrorEvent('error', { message: 'Game code did not start (game.js blocked or failed to load)' })); }, 8000);
