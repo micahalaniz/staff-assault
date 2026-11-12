@@ -78,6 +78,11 @@
   @keyframes alarm { 50% { color: #fff; text-shadow: 0 0 24px var(--red), 0 3px 0 #000; } }
   .herostamp { width: max-content; margin: 0 auto 10px; font-family: var(--head); font-size: 22px; letter-spacing: 3px; color: var(--gold); border: 3px solid var(--gold); padding: 2px 14px; transform: rotate(-3deg); }
   @media (prefers-reduced-motion: reduce) { #levelcard .lt.alarm { animation: none; } }
+  /* Staff assault: red strobe around the screen edges while the alarm runs. */
+  #strobe { position: absolute; inset: 0; opacity: 0; box-shadow: inset 0 0 140px 36px rgba(255, 16, 16, 0.75); }
+  body.assault #strobe { animation: strobe 0.45s steps(2) infinite; }
+  @keyframes strobe { 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { body.assault #strobe { animation: none; opacity: 0.5; } }
   #vignette { position: absolute; inset: 0; box-shadow: inset 0 0 160px 40px rgba(255, 0, 0, 0.55); opacity: 0; transition: opacity 0.1s; }
   #floaters { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
   .floater { position: absolute; left: 0; top: 0; font-weight: 800; opacity: 0.92; white-space: nowrap; text-shadow: 0 2px 0 #000, 0 0 6px #000; font-family: var(--body); }
@@ -89,7 +94,7 @@
   #bossbar .bb i { display: block; height: 100%; background: linear-gradient(90deg, #1f8a3a, #7dff9a); transition: width 0.15s; }
   #joinHint { position: absolute; bottom: 14px; right: 14px; font-size: 12px; color: var(--muted); background: var(--panel); padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line); }
   @media (max-width: 700px) { #joinHint { display: none; } .pcard { width: 170px; } }
-  #toast { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); font-size: 13px; color: var(--muted); background: var(--panel); padding: 5px 10px; border-radius: 6px; opacity: 0; transition: opacity 0.4s; }
+  #toast { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); font-size: 13px; color: var(--muted); background: var(--panel); padding: 5px 10px; border-radius: 6px; opacity: 0; transition: opacity 0.4s; }
   #toast.show { opacity: 1; }
 
   /* ---------- Panels (clear / game over / pause) ---------- */
@@ -121,6 +126,7 @@
 
 <div id="hud" class="hidden">
   <div id="vignette"></div>
+  <div id="strobe"></div>
   <div id="players"></div>
   <div id="objective"><div class="t" id="objT"></div><div class="c" id="objC"></div></div>
   <div id="fps"></div>
@@ -142,12 +148,13 @@
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GORE</span><div class="seg" id="segGore"><button data-v="1">On</button><button data-v="0">Off</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">CUSSING</span><div class="seg" id="segCuss"><button data-v="1">On</button><button data-v="0">Bleeped</button></div></div>
     <button class="go" id="startBtn">CLOCK IN</button>
-    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v5 · stuck-inmate fix + cleaner screen</div>
+    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v6 · ranks, auto weapons, staff assault alarms</div>
     <div class="controls">
       <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
       <b>Phone:</b> left thumb moves, right thumb aims and shoots, buttons for spray, baton and dash. Turn it sideways.<br>
-      <b>Space</b> baton &nbsp; <b>Shift</b> dash &nbsp; <b>Esc</b> pause<br>
-      <b>Controllers:</b> RT shoot, LT spray, X baton, A dash. Buddies press <b>A</b> on their own controller to jump in (up to 4).<br>
+      <b>Get promoted:</b> CO II, then SGT, then LT. Your gear upgrades on its own: Orange OC, OC Vapor, 40mm, shotgun, AR-15 and grenades.<br>
+      <b>Space</b> baton &nbsp; <b>Shift</b> dash &nbsp; <b>Q</b> grenade (LT) &nbsp; <b>Esc</b> pause<br>
+      <b>Controllers:</b> RT shoot, LT spray, X baton, A dash, Y grenade. Buddies press <b>A</b> on their own controller to jump in (up to 4).<br>
       Grab <b style="color:var(--gold)">tacos</b> and <b style="color:#7dff6a">energy drinks</b>. Glowing gear is rare: <b style="color:#3ddc5a">green</b>, <b style="color:#5aa0ff">blue</b>, <b style="color:#b973ff">purple</b>, <b style="color:#ff9a3a">orange</b>. Stand on a downed partner to pick them up.
     </div>
     <div class="dedic">For Caleb, Sgt. Halley Munoz, and all my Correctional Officer homies back home.</div>
@@ -156,7 +163,7 @@
 
 <div id="panel" class="hidden"><div class="card" id="panelCard"></div></div>
 
-<script type="module" src="./game.js?v=5"></script>
+<script type="module" src="./game.js?v=6"></script>
 <script>
   // Watchdog: if the game code never starts, say so instead of leaving dead buttons.
   setTimeout(function () { if (!window.G || !window.G.S) window.dispatchEvent(new ErrorEvent('error', { message: 'Game code did not start (game.js blocked or failed to load)' })); }, 8000);
