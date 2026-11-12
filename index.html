@@ -39,6 +39,17 @@
   .controls b { color: var(--text); font-weight: 600; }
   .dedic { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; font-style: italic; }
 
+  /* Sideways phones: squeeze the menu so CLOCK IN is on screen. */
+  @media (max-height: 560px) {
+    #menu { place-items: start center; padding: 8px; }
+    .card { padding: 10px 16px; width: min(640px, 100%); }
+    .title { font-size: 34px; } .title br { display: none; }
+    .stamp { font-size: 16px; margin: 4px auto 0; }
+    .tag, .controls, .dedic { display: none; }
+    .row { margin: 5px 0; } .seg button { padding: 6px 4px; } input[type=text] { padding: 6px 10px; }
+    .go { margin-top: 8px; font-size: 22px; padding: 7px; }
+  }
+
   /* ---------- HUD ---------- */
   #hud { position: fixed; inset: 0; pointer-events: none; }
   #players { position: absolute; top: 12px; left: 12px; display: flex; gap: 10px; flex-wrap: wrap; max-width: calc(100% - 140px); }
@@ -122,7 +133,7 @@
 
 <div id="menu">
   <div class="card">
-    <h1 class="title">STAFF<br>ASSAULT</h1>
+    <h1 class="title">STAFF<br> ASSAULT</h1>
     <span class="stamp">KILLER ROW</span>
     <p class="tag">Prison riots. Serial killers. Tacos. One DOC family. 1 to 4 players.</p>
     <div class="row"><label class="k" for="nameIn">Officer</label><input id="nameIn" type="text" maxlength="14" placeholder="Your last name" autocomplete="off"></div>
@@ -133,6 +144,7 @@
     <button class="go" id="startBtn">CLOCK IN</button>
     <div class="controls">
       <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
+      <b>Phone:</b> left thumb moves, right thumb aims and shoots, buttons for spray, baton and dash. Turn it sideways.<br>
       <b>Space</b> baton &nbsp; <b>Shift</b> dash &nbsp; <b>Esc</b> pause<br>
       <b>Controllers:</b> RT shoot, LT spray, X baton, A dash. Buddies press <b>A</b> on their own controller to jump in (up to 4).<br>
       Grab <b style="color:var(--gold)">tacos</b> and <b style="color:#7dff6a">energy drinks</b>. Glowing gear is rare: <b style="color:#3ddc5a">green</b>, <b style="color:#5aa0ff">blue</b>, <b style="color:#b973ff">purple</b>, <b style="color:#ff9a3a">orange</b>. Stand on a downed partner to pick them up.
