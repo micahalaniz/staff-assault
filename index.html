@@ -101,7 +101,25 @@
   #bossbar .bb i { display: block; height: 100%; background: linear-gradient(90deg, #1f8a3a, #7dff9a); transition: width 0.15s; }
   #joinHint { position: absolute; bottom: 14px; right: 14px; font-size: 12px; color: var(--muted); background: var(--panel); padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line); }
   @media (max-width: 700px) { #joinHint { display: none; } .pcard { width: 170px; } }
-  #toast { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); font-size: 13px; color: var(--muted); background: var(--panel); padding: 5px 10px; border-radius: 6px; opacity: 0; transition: opacity 0.4s; }
+  /* Weapon bar: click a slot (or 1-6 / mouse wheel) to switch. Desktop only; phones use the touch buttons. */
+  #wbar { position: absolute; right: 14px; bottom: 14px; display: flex; gap: 5px; align-items: stretch; pointer-events: auto; max-width: calc(100% - 380px); flex-wrap: wrap; justify-content: flex-end; }
+  #wbar .ws { position: relative; width: 92px; text-align: left; background: rgba(12,14,20,0.82); border: 1px solid var(--line); border-radius: 7px; padding: 4px 7px 5px; color: var(--text); cursor: pointer; font-family: var(--body); overflow: hidden; }
+  #wbar .ws:hover { border-color: #9fd0ff; }
+  #wbar .ws.on { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange), 0 0 14px rgba(255,122,26,0.45); background: rgba(60,30,10,0.85); }
+  #wbar .ws.locked { opacity: 0.42; cursor: not-allowed; }
+  #wbar .ws.cool { opacity: 0.6; }
+  #wbar .ws.nade:not(.locked) { border-color: #7dff6a; }
+  #wbar .ws.power { width: 120px; border-color: #ff3bd0; background: rgba(70,10,55,0.9); animation: hamPulse 0.5s ease-in-out infinite alternate; }
+  #wbar .ws.power::after { content: ''; position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--p, 1) * 100%); background: #ff3bd0; }
+  @keyframes hamPulse { to { box-shadow: 0 0 18px #ff3bd0; } }
+  #wbar .wk { position: absolute; top: 3px; right: 6px; font-size: 10px; color: var(--muted); font-weight: 700; }
+  #wbar .wn { display: block; font-family: var(--head); font-size: 13px; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 10px; }
+  #wbar .wl { display: block; font-size: 9.5px; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #wbar .ws.locked .wl { color: var(--muted); }
+  #wbar .wsep { width: 1px; background: var(--line); margin: 4px 2px; }
+  @media (pointer: coarse), (max-width: 760px) { #wbar { display: none; } }
+  @media (prefers-reduced-motion: reduce) { #wbar .ws.power { animation: none; } }
+  #toast { position: absolute; bottom: 86px; left: 50%; transform: translateX(-50%); font-size: 13px; color: var(--muted); background: var(--panel); padding: 5px 10px; border-radius: 6px; opacity: 0; transition: opacity 0.4s; }
   #toast.show { opacity: 1; }
 
   /* ---------- Panels (clear / game over / pause) ---------- */
@@ -144,6 +162,7 @@
   <div id="levelcard"><div class="lt" id="lvlT"></div><div class="ls" id="lvlS"></div></div>
   <div id="radio"><div class="who" id="radWho"></div><div class="txt" id="radTxt"></div></div>
   <div id="toast"></div>
+  <div id="wbar"></div>
   <div id="bossbar" class="hidden"><div class="bn">THE RIVERBANK RIPPER</div><div class="bb"><i id="bossFill"></i></div></div>
   <div id="joinHint" class="hidden">Press <b>A</b> on another controller to clock in</div>
 </div>
@@ -161,7 +180,7 @@
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">AUDIO</span><div class="seg" id="segAudio"><button data-v="all">Music + SFX</button><button data-v="sfx">SFX only</button><button data-v="off">Mute</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">CUSSING</span><div class="seg" id="segCuss"><button data-v="1">On</button><button data-v="0">Bleeped</button></div></div>
     <button class="go" id="startBtn">CLOCK IN</button>
-    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v12 · Staff Compromised</div>
+    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v13 · Dark levels, weapon bar, power weapons</div>
     <div id="board" class="board hidden"><div class="bh">SHIFT BOARD</div><div id="boardRows" class="stats"></div></div>
     <div class="controls">
       <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
@@ -177,7 +196,7 @@
 
 <div id="panel" class="hidden"><div class="card" id="panelCard"></div></div>
 
-<script type="module" src="./game.js?v=12"></script>
+<script type="module" src="./game.js?v=13"></script>
 <script>
   // Watchdog: if the game code never starts, say so instead of leaving dead buttons.
   setTimeout(function () { if (!window.G || !window.G.S) window.dispatchEvent(new ErrorEvent('error', { message: 'Game code did not start (game.js blocked or failed to load)' })); }, 8000);
