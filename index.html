@@ -161,7 +161,7 @@
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">AUDIO</span><div class="seg" id="segAudio"><button data-v="all">Music + SFX</button><button data-v="sfx">SFX only</button><button data-v="off">Mute</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">CUSSING</span><div class="seg" id="segCuss"><button data-v="1">On</button><button data-v="0">Bleeped</button></div></div>
     <button class="go" id="startBtn">CLOCK IN</button>
-    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v11 · Full soundtrack, new weapon sounds, phone-ready end screens</div>
+    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v12 · Staff Compromised</div>
     <div id="board" class="board hidden"><div class="bh">SHIFT BOARD</div><div id="boardRows" class="stats"></div></div>
     <div class="controls">
       <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
@@ -177,7 +177,7 @@
 
 <div id="panel" class="hidden"><div class="card" id="panelCard"></div></div>
 
-<script type="module" src="./game.js?v=11"></script>
+<script type="module" src="./game.js?v=12"></script>
 <script>
   // Watchdog: if the game code never starts, say so instead of leaving dead buttons.
   setTimeout(function () { if (!window.G || !window.G.S) window.dispatchEvent(new ErrorEvent('error', { message: 'Game code did not start (game.js blocked or failed to load)' })); }, 8000);
