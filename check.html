@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Staff Assault Check</title>
+<style>
+  :root { color-scheme: dark; --bg: #07080b; --text: #f1ede4; --muted: #9aa0ab; --ok: #7dff6a; --bad: #ff5a4a; --warn: #ffcf4a; --orange: #ff7a1a; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 'Segoe UI', system-ui, sans-serif; padding: 16px; }
+  main { max-width: 640px; margin: 0 auto; }
+  h1 { font-family: Impact, 'Arial Narrow Bold', sans-serif; letter-spacing: 1px; font-size: 32px; margin: 8px 0 4px; }
+  p { color: var(--muted); margin: 0 0 14px; }
+  ul { list-style: none; padding: 0; margin: 0 0 16px; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; }
+  li { padding: 9px 12px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; }
+  li:first-child { border-top: 0; }
+  li b { min-width: 150px; font-weight: 600; }
+  li span { word-break: break-word; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); } .warn { color: var(--warn); }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  a.btn { flex: 1; min-width: 200px; text-align: center; text-decoration: none; font-family: Impact, sans-serif; font-size: 22px; letter-spacing: 1px; padding: 10px; border-radius: 10px; background: var(--orange); color: #111; }
+  a.btn.alt { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.2); }
+  #advice { background: rgba(255,90,74,0.1); border: 1px solid rgba(255,90,74,0.4); border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>STAFF ASSAULT: SYSTEM CHECK</h1>
+  <p>Screenshot this page and send it over if the game won't start.</p>
+  <ul id="out"></ul>
+  <div id="advice"></div>
+  <div class="btns">
+    <a class="btn" href="./">START GAME</a>
+    <a class="btn alt" href="./?safe">START IN SAFE MODE</a>
+  </div>
+</main>
+<script>
+  var out = document.getElementById('out'), advice = [];
+  function row(k, v, cls) { var li = document.createElement('li'); li.innerHTML = '<b>' + k + '</b><span class="' + (cls || '') + '"></span>'; li.lastChild.textContent = v; out.appendChild(li); }
+  var ua = navigator.userAgent, ff = /firefox\/(\d+)/i.exec(ua);
+  row('Browser', ff ? 'Firefox ' + ff[1] : (/edg\//i.test(ua) ? 'Edge' : /chrome/i.test(ua) ? 'Chrome' : /safari/i.test(ua) ? 'Safari' : 'Other') + ' · ' + navigator.platform);
+  if (ff && +ff[1] < 115) { advice.push('Your Firefox is old. Menu → Help → About Firefox to update it.'); }
+  // WebGL 2 (the game needs it).
+  function probe(opts) { try { var c = document.createElement('canvas'), g = c.getContext('webgl2', opts); return g; } catch (e) { return null; } }
+  var gl = probe({ failIfMajorPerformanceCaveat: true }), soft = false;
+  if (!gl) { gl = probe({}); soft = !!gl; }
+  if (!gl) {
+    row('3D graphics (WebGL 2)', 'NOT AVAILABLE', 'bad');
+    advice.push(ff ? 'Firefox has 3D turned off. Settings → General → Performance: uncheck "Use recommended performance settings", then CHECK "Use hardware acceleration when available". Restart Firefox. If still blocked, type about:config, search webgl.disabled and make sure it is false.'
+                   : 'This browser cannot start 3D graphics. Update it, or try Chrome or Edge.');
+  } else {
+    var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    var name = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    row('3D graphics (WebGL 2)', soft ? 'Works, but SOFTWARE only (slow)' : 'Works', soft ? 'warn' : 'ok');
+    row('Graphics card', name || 'unknown');
+    row('Max texture size', String(gl.getParameter(gl.MAX_TEXTURE_SIZE)), gl.getParameter(gl.MAX_TEXTURE_SIZE) >= 4096 ? 'ok' : 'warn');
+    var hf = !!gl.getExtension('EXT_color_buffer_float') || !!gl.getExtension('EXT_color_buffer_half_float');
+    row('HDR effects', hf ? 'Supported' : 'Missing (use Safe Mode)', hf ? 'ok' : 'warn');
+    if (soft) advice.push('Your browser is drawing 3D without the graphics card. Turn on hardware acceleration in the browser settings, or use Safe Mode.');
+    if (!hf) advice.push('Use the SAFE MODE button below.');
+  }
+  // Saved settings.
+  try { localStorage.setItem('sa_check', '1'); localStorage.removeItem('sa_check'); row('Saved settings', 'Works', 'ok'); }
+  catch (e) { row('Saved settings', 'Blocked (game still runs, just won’t remember stuff)', 'warn'); }
+  // Can the game file download?
+  var t0 = performance.now();
+  fetch('./game.js', { cache: 'reload' }).then(function (r) {
+    return r.text().then(function (t) { row('Game download', r.ok ? 'OK (' + Math.round(t.length / 1024) + ' KB in ' + Math.round(performance.now() - t0) + ' ms)' : 'FAILED: HTTP ' + r.status, r.ok ? 'ok' : 'bad'); });
+  }).catch(function (e) {
+    row('Game download', 'BLOCKED: ' + e.message, 'bad');
+    advice.push('Something is blocking the game file (an ad blocker, antivirus, or work network). Allow micahalaniz.github.io, or try another network.');
+  }).then(showAdvice);
+  function showAdvice() {
+    var a = document.getElementById('advice');
+    if (!advice.length) { advice.push('Everything looks good. If the game is still black, press Ctrl+Shift+R on the game page, or try SAFE MODE.'); a.style.borderColor = 'rgba(125,255,106,0.4)'; a.style.background = 'rgba(125,255,106,0.08)'; }
+    a.innerHTML = advice.map(function (x) { return '• ' + x; }).join('<br>'); a.style.display = 'block';
+  }
+</script>
+</body>
+</html>
