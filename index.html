@@ -35,6 +35,8 @@
   .go:active { transform: translateY(3px); box-shadow: 0 3px 0 #a5470a; }
   .controls { margin-top: 14px; font-size: 12.5px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 12px; }
   .controls b { color: var(--text); font-weight: 600; }
+  .go.endless { margin-top: 8px; background: linear-gradient(180deg, #b3122a, #7a0a1c); color: #fff; font-size: 20px; box-shadow: 0 4px 0 #3d0510; }
+  .go.endless small { font: 600 12px system-ui; opacity: .8; letter-spacing: .5px; }
   .byline { text-align: center; margin: 2px 0 10px; font-size: 12px; letter-spacing: .5px; color: #ffcf4a; font-weight: 600; }
   .dedic { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; font-style: italic; }
 
@@ -181,8 +183,10 @@
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">PACE</span><div class="seg" id="segPace"><button data-v="0.8">Chill</button><button data-v="1">Classic</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">AUDIO</span><div class="seg" id="segAudio"><button data-v="all">Music + SFX</button><button data-v="sfx">SFX only</button><button data-v="off">Mute</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">CUSSING</span><div class="seg" id="segCuss"><button data-v="1">On</button><button data-v="0">Bleeped</button></div></div>
+    <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">DIFFICULTY</span><div class="seg" id="segDiff"><button data-v="rookie">Rookie</button><button data-v="veteran">Veteran</button><button data-v="pro">Pro</button><button data-v="lifer">Lifer</button></div></div>
     <button class="go" id="startBtn">CLOCK IN</button>
-    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v17 · Gore Galore</div>
+    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v18 · Kill Streaks + Endless</div>
+    <button class="go endless" id="endlessBtn">ENDLESS OVERTIME <small>· waves never stop</small></button>
     <div id="board" class="board hidden"><div class="bh">SHIFT BOARD</div><div id="boardRows" class="stats"></div></div>
     <div class="controls">
       <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
@@ -198,7 +202,7 @@
 
 <div id="panel" class="hidden"><div class="card" id="panelCard"></div></div>
 
-<script type="module" src="./game.js?v=17"></script>
+<script type="module" src="./game.js?v=18"></script>
 <script>
   // Watchdog: if the game code never starts, say so instead of leaving dead buttons.
   setTimeout(function () { if (!window.G || !window.G.S) window.dispatchEvent(new ErrorEvent('error', { message: 'Game code did not start (game.js blocked or failed to load)' })); }, 8000);
