@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-</head>
-<body>
-<title>Staff Assault: Killer Row</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mandatory Overtime</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ff7a1a'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Impact' text-anchor='middle' fill='%23111'%3EMO%3C/text%3E%3C/svg%3E">
 <style>
   :root {
@@ -37,6 +35,7 @@
   .go:active { transform: translateY(3px); box-shadow: 0 3px 0 #a5470a; }
   .controls { margin-top: 14px; font-size: 12.5px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 12px; }
   .controls b { color: var(--text); font-weight: 600; }
+  .byline { text-align: center; margin: 2px 0 10px; font-size: 12px; letter-spacing: .5px; color: #ffcf4a; font-weight: 600; }
   .dedic { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; font-style: italic; }
 
   /* Sideways phones: squeeze the menu so CLOCK IN is on screen. */
@@ -45,7 +44,7 @@
     .card { padding: 10px 16px; width: min(640px, 100%); }
     .title { font-size: 34px; } .title br { display: none; }
     .stamp { font-size: 16px; margin: 4px auto 0; }
-    .tag, .controls, .dedic { display: none; }
+    .tag, .controls { display: none; } .dedic { margin-top: 6px; font-size: 11px; }
     .row { margin: 5px 0; } .seg button { padding: 6px 4px; } input[type=text] { padding: 6px 10px; }
     .go { margin-top: 8px; font-size: 22px; padding: 7px; }
   }
@@ -150,6 +149,8 @@
     window.addEventListener('unhandledrejection', function (e) { show(String(e.reason && e.reason.message || e.reason)); });
   })();
 </script>
+</head>
+<body>
 <canvas id="game"></canvas>
 <div id="floaters"></div>
 
@@ -163,24 +164,25 @@
   <div id="radio"><div class="who" id="radWho"></div><div class="txt" id="radTxt"></div></div>
   <div id="toast"></div>
   <div id="wbar"></div>
-  <div id="bossbar" class="hidden"><div class="bn">THE RIVERBANK RIPPER</div><div class="bb"><i id="bossFill"></i></div></div>
+  <div id="bossbar" class="hidden"><div class="bn">BIG FOGGY</div><div class="bb"><i id="bossFill"></i></div></div>
   <div id="joinHint" class="hidden">Press <b>A</b> on another controller to clock in</div>
 </div>
 
 <div id="menu">
   <div class="card">
-    <h1 class="title">STAFF<br> ASSAULT</h1>
-    <span class="stamp">KILLER ROW</span>
-    <p class="tag">Prison riots. Serial killers. Tacos. One DOC family. 1 to 4 players.</p>
+    <h1 class="title">MANDATORY<br> OVERTIME</h1>
+    <span class="stamp">RIOT SHIFT</span>
+    <p class="tag">Prison riots. Tacos. Paperwork. The shift that never ends. 1 to 4 players.</p>
+    <p class="byline">Made by Micah Alaniz, Correctional Officer · for WSP and every CO out there</p>
     <div class="row"><label class="k" for="nameIn">Officer</label><input id="nameIn" type="text" maxlength="14" placeholder="Your last name" autocomplete="off"></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GENDER</span><div class="seg" id="segGender"><button data-v="male">Male</button><button data-v="female">Female</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GRAPHICS</span><div class="seg" id="segQuality"><button data-v="low">Low</button><button data-v="medium">Medium</button><button data-v="high">High</button><button data-v="ultra">Ultra</button></div></div>
-    <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GORE</span><div class="seg" id="segGore"><button data-v="1">On</button><button data-v="0">Off</button></div></div>
+    <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">GORE</span><div class="seg" id="segGore"><button data-v="2">MAX</button><button data-v="1">On</button><button data-v="0">Off</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">PACE</span><div class="seg" id="segPace"><button data-v="0.8">Chill</button><button data-v="1">Classic</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">AUDIO</span><div class="seg" id="segAudio"><button data-v="all">Music + SFX</button><button data-v="sfx">SFX only</button><button data-v="off">Mute</button></div></div>
     <div class="row"><span class="k" style="width:92px;color:var(--muted);font-size:13px;letter-spacing:1px">CUSSING</span><div class="seg" id="segCuss"><button data-v="1">On</button><button data-v="0">Bleeped</button></div></div>
     <button class="go" id="startBtn">CLOCK IN</button>
-    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v15 · CockRing &amp; BigBitch</div>
+    <div id="ver" style="text-align:center;font-size:11px;color:#6b7280;margin-top:6px">v16 · Mandatory Overtime</div>
     <div id="board" class="board hidden"><div class="bh">SHIFT BOARD</div><div id="boardRows" class="stats"></div></div>
     <div class="controls">
       <b>WASD</b> move &nbsp; <b>Mouse</b> aim &nbsp; <b>Left click</b> pepperball &nbsp; <b>Right click</b> OC spray<br>
@@ -188,19 +190,18 @@
       <b>Get promoted:</b> CO II, then SGT, then LT. Your gear upgrades on its own: Orange OC, OC Vapor, 40mm, shotgun, AR-15 and grenades.<br>
       <b>Space</b> baton &nbsp; <b>Shift</b> dash (hold to sprint) &nbsp; <b>F</b> MANDATORY OVERTIME &nbsp; <b>Q</b> grenade (LT) &nbsp; <b>Esc</b> pause<br>
       <b>Controllers:</b> RT shoot, LT spray, X baton, A dash (hold to sprint), Y grenade, B overtime. Buddies press <b>A</b> on their own controller to jump in (up to 4).<br>
-      Grab <b style="color:var(--gold)">tacos</b>, <b style="color:#7dff6a">energy drinks</b>, <b style="color:#ff7a2a">Zyn</b> (hot) and <b style="color:#c79a5a">chew</b> to heal. Glowing gear is rare: <b style="color:#3ddc5a">green</b>, <b style="color:#5aa0ff">blue</b>, <b style="color:#b973ff">purple</b>, <b style="color:#ff9a3a">orange</b>. Stand on a downed partner to pick them up.
+      Grab <b style="color:var(--gold)">tacos</b>, <b style="color:#7dff6a">energy drinks</b>, <b style="color:#ff7a2a">hot pouches</b> and <b style="color:#c79a5a">chew</b> to heal. Glowing gear is rare: <b style="color:#3ddc5a">green</b>, <b style="color:#5aa0ff">blue</b>, <b style="color:#b973ff">purple</b>, <b style="color:#ff9a3a">orange</b>. Stand on a downed partner to pick them up.
     </div>
-    <div class="dedic">For Sgt. Halley Munoz, Caleb Alaniz, Dustin Davis, and all my Correctional Officer homies back home.</div>
+    <div class="dedic"><b>Made by Micah Alaniz, Correctional Officer</b>, for my family and friends back home at WSP.<br>Shout out to Bernardo, Dustin Davis &amp; Caleb Alaniz, and to every correctional officer out there. Much respect.</div>
   </div>
 </div>
 
 <div id="panel" class="hidden"><div class="card" id="panelCard"></div></div>
 
-<script type="module" src="./game.js?v=15"></script>
+<script type="module" src="./game.js?v=16"></script>
 <script>
   // Watchdog: if the game code never starts, say so instead of leaving dead buttons.
   setTimeout(function () { if (!window.G || !window.G.S) window.dispatchEvent(new ErrorEvent('error', { message: 'Game code did not start (game.js blocked or failed to load)' })); }, 8000);
 </script>
-
 </body>
 </html>
